@@ -1396,8 +1396,6 @@ bool NukiBle::registerOnUsdioChar() {
 }
 
 void NukiBle::notifyCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic, uint8_t* recData, size_t length, bool isNotify) {
-  vTaskDelay(pdMS_TO_TICKS(100));
-
   lastHeartbeat = (esp_timer_get_time() / 1000);
 
   if (debugNukiCommunication) {
