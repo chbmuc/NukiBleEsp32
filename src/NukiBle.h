@@ -463,6 +463,8 @@ class NukiBle : public BLEClientCallbacks, public BleScanner::Subscriber {
     bool disconnecting = false;
     bool statusUpdated = false;
     bool refreshServices = false;
+    bool subscribedOnGdio = false;
+    bool subscribedOnUsdio = false;
     bool smartLockUltra = false;
     bool ultraAuthInfoCommandReceived = false;
     bool encryptPairing = false;

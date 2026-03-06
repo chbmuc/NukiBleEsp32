@@ -313,6 +313,7 @@ void NukiBle::disconnect()
     pGdioCharacteristic->unsubscribe(false);
   }
 
+  subscribedOnGdio = false;
   pGdioCharacteristic = nullptr;
   pKeyturnerPairingService = nullptr;
 
@@ -320,6 +321,7 @@ void NukiBle::disconnect()
     pUsdioCharacteristic->unsubscribe(false);
   }
 
+  subscribedOnUsdio = false;
   pUsdioCharacteristic = nullptr;
   pKeyturnerDataService = nullptr;
 
@@ -1289,6 +1291,10 @@ bool NukiBle::sendPlainMessage(Command commandIdentifier, const unsigned char* p
 }
 
 bool NukiBle::registerOnGdioChar() {
+  if (subscribedOnGdio && pGdioCharacteristic != nullptr) {
+    return true;
+  }
+
   // Obtain a reference to the KeyTurner Pairing service
   if (pKeyturnerPairingService == nullptr) {
     if (isLockUltra()) {
@@ -1320,6 +1326,7 @@ bool NukiBle::registerOnGdioChar() {
         if (debugNukiCommunication) {
           ESP_LOGD("NukiBle", "GDIO characteristic registered");
         }
+        subscribedOnGdio = true;
         vTaskDelay(pdMS_TO_TICKS(100));
         return true;
       } else {
@@ -1346,6 +1353,10 @@ bool NukiBle::registerOnGdioChar() {
 }
 
 bool NukiBle::registerOnUsdioChar() {
+  if (subscribedOnUsdio && pUsdioCharacteristic != nullptr) {
+    return true;
+  }
+
   // Obtain a reference to the KeyTurner service
   if (pKeyturnerDataService == nullptr) {
     pKeyturnerDataService = pClient->getService(deviceServiceUUID);
@@ -1369,6 +1380,7 @@ bool NukiBle::registerOnUsdioChar() {
         if (debugNukiCommunication) {
           ESP_LOGD("NukiBle", "USDIO characteristic registered");
         }
+        subscribedOnUsdio = true;
         vTaskDelay(pdMS_TO_TICKS(100));
         return true;
       } else {
