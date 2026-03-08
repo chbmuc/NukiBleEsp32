@@ -254,7 +254,9 @@ bool NukiBle::connectBle(const BLEAddress bleAddress, bool pairing) {
         #ifndef NUKI_NO_WDT_RESET
         esp_task_wdt_reset();
         #endif
-        vTaskDelay(pdMS_TO_TICKS(50));
+        if (!pClient->isConnected()) {
+          vTaskDelay(pdMS_TO_TICKS(50));
+        }
         continue;
       }
     } else {
@@ -266,7 +268,9 @@ bool NukiBle::connectBle(const BLEAddress bleAddress, bool pairing) {
         #ifndef NUKI_NO_WDT_RESET
         esp_task_wdt_reset();
         #endif
-        vTaskDelay(pdMS_TO_TICKS(50));
+        if (!pClient->isConnected()) {
+          vTaskDelay(pdMS_TO_TICKS(50));
+        }
         continue;
       }
     }
@@ -1319,8 +1323,6 @@ bool NukiBle::registerOnGdioChar() {
       if (pGdioCharacteristic->canIndicate()) {
         if(!pGdioCharacteristic->subscribe(false, callback, true)) {
           ESP_LOGW("NukiBle", "Unable to subscribe to GDIO characteristic");
-          refreshServices = true;
-          disconnect();
           return false;
         }
         if (debugNukiCommunication) {
@@ -1373,8 +1375,6 @@ bool NukiBle::registerOnUsdioChar() {
       if (pUsdioCharacteristic->canIndicate()) {
         if(!pUsdioCharacteristic->subscribe(false, callback, true)) {
           ESP_LOGW("NukiBle", "Unable to subscribe to USDIO characteristic");
-          refreshServices = true;
-          disconnect();
           return false;
         }
         if (debugNukiCommunication) {
